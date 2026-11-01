@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الاقتصاد الكلي الشامل | المنصة الأكاديمية المتكاملة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4f46e5; --primary-hover: #4338ca; --secondary: #10b981;
+            --danger: #ef4444; --warning: #f59e0b; --dark: #0f172a;
+            --bg: #f1f5f9; --sidebar-bg: #ffffff; --card-bg: #ffffff;
+            --text: #334155; --text-muted: #64748b; --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05); --radius: 1rem;
+        }
+        [data-theme="dark"] {
+            --primary: #6366f1; --primary-hover: #818cf8; --secondary: #34d399;
+            --danger: #f87171; --warning: #fbbf24; --dark: #f8fafc;
+            --bg: #0f172a; --sidebar-bg: #1e293b; --card-bg: #1e293b;
+            --text: #e2e8f0; --text-muted: #94a3b8; --border: #334155;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+        body { background-color: var(--bg); color: var(--text); line-height: 1.8; overflow: hidden; }
+        
+        /* Tooltip */
+        .term { border-bottom: 2px dashed var(--primary); cursor: help; position: relative; font-weight: 700; color: var(--primary); display: inline-block; }
+        .term:hover::after { content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: var(--dark); color: var(--light); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.9rem; white-space: nowrap; z-index: 1000; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3); font-weight: normal; margin-bottom: 5px; }
+        .term:hover::before { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-top-color: var(--dark); z-index: 1000; }
+        
+        .interactive-text { color: var(--primary); font-weight: 700; cursor: pointer; text-decoration: underline; background: rgba(79, 70, 229, 0.1); padding: 0.2rem 0.5rem; border-radius: 0.3rem; display: inline-block; }
+        .interactive-text:hover { background: var(--primary); color: white; }
+        
+        .math-block { background: var(--sidebar-bg); border: 1px solid var(--border); border-radius: 0.5rem; padding: 1.5rem; margin: 1.5rem 0; font-family: 'Courier New', Courier, monospace; direction: ltr; text-align: left; font-size: 1.1rem; line-height: 2; overflow-x: auto; color: var(--dark); }
+        .math-block span.highlight { color: var(--primary); font-weight: bold; }
+        .step-box { border-right: 4px solid var(--primary); padding: 1rem 1.5rem; background: rgba(79, 70, 229, 0.05); margin: 1rem 0; border-radius: 0.5rem; }
+        .data-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; text-align: center; }
+        .data-table th { background: var(--primary); color: white; padding: 0.75rem; border: 1px solid var(--border); }
+        .data-table td { padding: 0.75rem; border: 1px solid var(--border); background: var(--card-bg); }
+        .data-table tr:nth-child(even) td { background: var(--bg); }
+        .data-table .highlight-row td { background: rgba(16, 185, 129, 0.2); font-weight: bold; }
+        
+        header { background: var(--sidebar-bg); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; height: 70px; z-index: 100; }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+        .chapter-tabs { display: flex; gap: 1rem; }
+        .chapter-tabs button { background: transparent; border: none; font-size: 1.1rem; font-weight: 700; color: var(--text-muted); cursor: pointer; padding: 0.5rem 1rem; border-radius: 0.5rem; }
+        .chapter-tabs button.active { color: var(--primary); background: rgba(79, 70, 229, 0.1); }
+        .theme-toggle { background: var(--bg); border: 1px solid var(--border); padding: 0.5rem; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
+        
+        .app-container { display: flex; height: calc(100vh - 70px); }
+        .sidebar { width: 320px; background: var(--sidebar-bg); border-left: 1px solid var(--border); overflow-y: auto; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .slide-btn { background: transparent; border: 1px solid var(--border); text-align: right; padding: 0.75rem 1rem; border-radius: 0.5rem; cursor: pointer; font-size: 0.95rem; font-weight: 600; color: var(--text); display: flex; align-items: flex-start; gap: 0.5rem; line-height: 1.4; }
+        .slide-btn:hover { background: var(--bg); }
+        .slide-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .slide-btn .num { background: rgba(0,0,0,0.1); padding: 0.1rem 0.4rem; border-radius: 0.3rem; font-size: 0.8rem; margin-top: 0.2rem; }
+        .slide-btn.active .num { background: rgba(255,255,255,0.2); }
+        .sidebar-divider { height: 1px; background: var(--border); margin: 1rem 0; }
+        .action-btn { background: var(--secondary); color: white; border: none; padding: 1rem; border-radius: 0.5rem; font-weight: 700; font-size: 1rem; cursor: pointer; margin-top: 0.5rem; display: flex; justify-content: center; align-items: center; gap: 0.5rem; }
+        .action-btn.quiz { background: var(--warning); }
+        
+        .main-content { flex: 1; overflow-y: auto; padding: 3rem; scroll-behavior: smooth; }
+        .content-wrapper { max-width: 950px; margin: 0 auto; background: var(--card-bg); padding: 3rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border); min-height: 80vh; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        h2.slide-title { font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 3px solid var(--border); }
+        h3 { color: var(--dark); margin-top: 1.5rem; margin-bottom: 1rem; font-size: 1.3rem; }
+        p { font-size: 1.1rem; color: var(--text); margin-bottom: 1.2rem; line-height: 1.8; }
+        ul, ol { margin-bottom: 1.5rem; padding-right: 2rem; font-size: 1.1rem; }
+        li { margin-bottom: 0.8rem; }
+        .real-world { background: rgba(16, 185, 129, 0.1); border-right: 6px solid var(--secondary); padding: 1.5rem; border-radius: 0.5rem; margin: 2rem 0; }
+        .real-world h4 { color: var(--secondary); margin-bottom: 0.5rem; font-size: 1.2rem; }
+        
+        .graph-container { background: var(--bg); border-radius: var(--radius); padding: 1.5rem; margin: 2rem 0; border: 1px solid var(--border); }
+        svg { width: 100%; height: 400px; display: block; }
+        .controls { display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; align-items: center; }
+        .btn { background: var(--primary); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 700; cursor: pointer; }
+        .btn:hover { background: var(--primary-hover); }
+        
+        .question-block { margin-bottom: 2.5rem; padding: 1.5rem; background: var(--bg); border-radius: 0.5rem; border: 1px solid var(--border); }
+        .question-text { font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .option { padding: 1rem; border: 2px solid var(--border); border-radius: 0.5rem; cursor: pointer; background: var(--card-bg); font-weight: 600; transition: all 0.2s; }
+        .option:hover { border-color: var(--primary); }
+        .option.selected { border-color: var(--primary); background: rgba(79,70,229,0.1); }
+        .option.correct { border-color: var(--secondary); background: rgba(16,185,129,0.2); }
+        .option.wrong { border-color: var(--danger); background: rgba(239,68,68,0.1); }
+        .explanation { margin-top: 1rem; padding: 1rem; background: rgba(245, 158, 11, 0.1); border-right: 4px solid var(--warning); display: none; }
+        .explanation.show { display: block; }
+        .score-box { text-align: center; font-size: 1.5rem; font-weight: 900; color: var(--primary); padding: 2rem; background: var(--bg); border-radius: var(--radius); display: none; margin-top: 2rem; }
+        
+        .sim-container { background: var(--bg); padding: 2rem; border-radius: var(--radius); border: 1px solid var(--border); }
+        .sim-slider-box { margin-bottom: 2rem; text-align: center; }
+        .sim-slider-box input[type="range"] { width: 80%; cursor: pointer; accent-color: var(--primary); margin-top: 1rem; }
+        .sim-analysis { padding: 1.5rem; background: var(--card-bg); border-radius: 0.5rem; border-right: 6px solid var(--primary); margin-top: 1rem; font-size: 1.1rem; font-weight: 600; transition: all 0.3s; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>الاقتصاد الكلي</div>
+        <div class="chapter-tabs">
+            <button class="active" onclick="switchChapter('ch4')">الفصل الرابع</button>
+            <button onclick="switchChapter('ch5')">الفصل الخامس</button>
+            <button onclick="switchChapter('ch6')">الفصل السادس</button>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    </header>
+
+    <div class="app-container">
+        <aside class="sidebar" id="sidebar"></aside>
+        <main class="main-content" id="main-content">
+            <div class="content-wrapper" id="slide-content"></div>
+        </main>
+    </div>
+
+    <script>
+        const contentData = {
+            ch4: {
+                slides: [
+                    { title: "الدرس 1: المفهوم والافتراضات الأساسية", html: `
+                        <h2 class="slide-title">مفهوم التوازن والافتراضات</h2>
+                        <p>التوازن في الاقتصاد الكلي يتحقق عندما يتساوى <span class="term" data-tooltip="الطلب الكلي (Aggregate Demand)">AD</span> مع <span class="term" data-tooltip="العرض الكلي (Aggregate Supply)">AS</span>.</p>
+                        <div class="math-block">AD = C + I + G + (X - M)</div>
+                        <div class="math-block">AS = Y (الناتج المحلي الإجمالي)</div>
+                        <p>شرط التوازن: <strong>Y = AD</strong></p>
+                        <h3>الافتراضات الأساسية للنموذج (Slides 2):</h3>
+                        <ol>
+                            <li><strong>ثبات المستوى العام للأسعار:</strong> نفترض أن الأسعار وأسعار الفائدة وسعر الصرف ثابتة.</li>
+                            <li><strong>الإنفاق الاستهلاكي (C) هو المتغير الوحيد التابع للدخل.</strong></li>
+                            <li><strong>ثبات مكونات الطلب الكلي الأخرى:</strong> الاستثمار (I)، الإنفاق الحكومي (G)، صافي الصادرات (X-M) تعتبر متغيرات مستقلة.</li>
+                            <li><strong>عدم تدخل الدولة:</strong> في النموذج المبسط، لا توجد سياسات مالية لتنظيم الطلب.</li>
+                        </ol>
+                        <div class="real-world"><h4>💡 الربط بالواقع</h4><p>في الواقع، لا تكون الأسعار ثابتة، لكن هذا الافتراض (Ceteris Paribus) يسمح لنا بعزل أثر الدخل على الاستهلاك لدراسة النموذج الأساسي قبل إدخال تعقيدات التضخم.</p></div>
+                    `},
+                    { title: "الدرس 2: حالات عدم التوازن (المخزون)", html: `
+                        <h2 class="slide-title">ميكانيكية العودة للتوازن</h2>
+                        <p>ماذا يحدث إذا لم يتحقق شرط التوازن (Y = AD)؟</p>
+                        <div class="step-box">
+                            <h4>الحالة الأولى: الطلب أكبر من العرض (AD > Y)</h4>
+                            <ul>
+                                <li><strong>الأثر المباشر:</strong> يواجه الاقتصاد نقصاً في المخزون (Inventory Depletion).</li>
+                                <li><strong>رد فعل المنتجين:</strong> يقوم رجال الأعمال بسحب المخزون لمواجهة الطلب، مما يعطيهم مؤشراً لـ <strong>زيادة الإنتاج (Y)</strong> في الفترات القادمة.</li>
+                                <li><strong>الأسعار:</strong> إذا توقع رجال الأعمال استمرار الزيادة في الطلب لفترة طويلة، سيقومون برفع الأسعار.</li>
+                                <li><strong>النتيجة:</strong> يرتفع Y حتى يصل للتوازن.</li>
+                            </ul>
+                        </div>
+                        <div class="step-box" style="border-right-color: var(--danger);">
+                            <h4>الحالة الثانية: العرض أكبر من الطلب (AS > Y)</h4>
+                            <ul>
+                                <li><strong>الأثر المباشر:</strong> يتراكم المخزون (Inventory Accumulation) ويصعب تحديد الكميات الصحيحة للإنتاج.</li>
+                                <li><strong>رد فعل المنتجين:</strong> يدرك القطاع الخاص أن قرارات الإنتاج غير صحيحة، فيقوم بـ <strong>تخفيض الإنتاج (Y)</strong>.</li>
+                                <li><strong>الأسعار:</strong> لتشجيع المبيعات والتخلص من المخزون، يقومون بـ <strong>تخفيض الأسعار</strong>.</li>
+                                <li><strong>النتيجة:</strong> ينخفض Y حتى يصل للتوازن.</li>
+                            </ul>
+                        </div>
+                    `},
+                    { title: "الدرس 3: جدول بيانات الإنفاق الكلي", html: `
+                        <h2 class="slide-title">مثال رقمي: قائمة بيانات الإنفاق (Slide 6)</h2>
+                        <p>لنفترض البيانات التالية لاقتصاد ما (بالمليون ريال). لاحظ كيف يتغير الاستهلاك (C) مع الدخل (Y)، بينما تبقى المكونات الأخرى ثابتة.</p>
+                        <table class="data-table">
+                            <thead><tr><th>الدخل الكلي (Y)</th><th>الاستهلاك (C)</th><th>الاستثمار (I)</th><th>الإنفاق الحكومي (G)</th><th>صافي الصادرات (X-M)</th><th>الطلب الكلي (AD)</th><th>حالة الاقتصاد</th></tr></thead>
+                            <tbody>
+                                <tr><td>4800</td><td>3000</td><td>900</td><td>1300</td><td>-100</td><td>5100</td><td style="color:var(--danger);">AD > Y (نقص مخزون)</td></tr>
+                                <tr><td>5200</td><td>3300</td><td>900</td><td>1300</td><td>-100</td><td>5400</td><td style="color:var(--danger);">AD > Y (نقص مخزون)</td></tr>
+                                <tr><td>5600</td><td>3600</td><td>900</td><td>1300</td><td>-100</td><td>5700</td><td style="color:var(--danger);">AD > Y (نقص مخزون)</td></tr>
+                                <tr class="highlight-row"><td>6000</td><td>3900</td><td>900</td><td>1300</td><td>-100</td><td>6000</td><td style="color:var(--secondary);">Y = AD (توازن)</td></tr>
+                                <tr><td>6400</td><td>4200</td><td>900</td><td>1300</td><td>-100</td><td>6300</td><td style="color:var(--warning);">AS > AD (تراكم مخزون)</td></tr>
+                                <tr><td>6800</td><td>4500</td><td>900</td><td>1300</td><td>-100</td><td>6600</td><td style="color:var(--warning);">AS > AD (تراكم مخزون)</td></tr>
+                                <tr><td>7200</td><td>4800</td><td>900</td><td>1300</td><td>-100</td><td>6900</td><td style="color:var(--warning);">AS > AD (تراكم مخزون)</td></tr>
+                            </tbody>
+                        </table>
+                        <p><strong>الاستنتاج:</strong> التوازن يتحقق عند <strong>Y = AD = 6000</strong>. أي نقطة أقل، هناك طلب زائد يدفع للإنتاج. أي نقطة أعلى، هناك عرض زائد يدفع لتقليص الإنتاج.</p>
+                    `},
+                    { title: "الدرس 4: التمثيل البياني (نموذج كينز)", html: `
+                        <h2 class="slide-title">التمثيل البياني للتوازن (Slide 8-10)</h2>
+                        <p>نستخدم خط زاوية 45 درجة لتمثيل العرض الكلي (Y). نقطة تقاطع منحنى AD مع خط 45 تمثل التوازن.</p>
+                        <div class="graph-container">
+                            <svg viewBox="0 0 500 350" id="ch4-chart">
+                                <line x1="60" y1="300" x2="460" y2="300" stroke="var(--text-muted)" stroke-width="2" />
+                                <line x1="60" y1="300" x2="60" y2="30" stroke="var(--text-muted)" stroke-width="2" />
+                                <text x="460" y="320" fill="var(--text-muted)" font-size="14" text-anchor="end">الناتج (Y)</text>
+                                <text x="50" y="30" fill="var(--text-muted)" font-size="14" text-anchor="end">الإنفاق (AD)</text>
+                                <line x1="60" y1="300" x2="300" y2="30" stroke="var(--dark)" stroke-width="2" stroke-dasharray="5,5" />
+                                <text x="310" y="40" fill="var(--dark)" font-size="14">Y (خط 45°)</text>
+                                <line x1="280" y1="300" x2="280" y2="50" stroke="var(--secondary)" stroke-width="2" stroke-dasharray="3,3" />
+                                <text x="280" y="40" fill="var(--secondary)" font-size="14" text-anchor="middle">YF (التوظيف الكامل)</text>
+                                <line id="ad-line" x1="60" y1="250" x2="400" y2="80" stroke="var(--danger)" stroke-width="3" />
+                                <text id="ad-label" x="410" y="80" fill="var(--danger)" font-size="16" font-weight="bold">AD</text>
+                                <circle id="eq-point" cx="200" cy="150" r="7" fill="var(--primary)" />
+                                <line id="eq-line-y" x1="200" y1="150" x2="200" y2="300" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="3,3" />
+                                <line id="eq-line-x" x1="60" y1="150" x2="200" y2="150" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="3,3" />
+                                <text id="eq-text" x="200" y="320" fill="var(--primary)" font-size="14" text-anchor="middle" font-weight="bold">Y*</text>
+                            </svg>
+                        </div>
+                        <div class="controls">
+                            <label for="ad-slider" style="font-weight:bold; width:100%;">جرب تحريك منحنى AD:</label>
+                            <input type="range" id="ad-slider" min="150" max="350" value="250" step="10" style="width:100%; cursor:pointer;">
+                        </div>
+                        <div id="ch4-status" style="text-align:center; font-weight:bold; margin-top:1rem; padding:1rem; border-radius:0.5rem; background:rgba(16,185,129,0.1); color:var(--secondary);">حالة الاقتصاد: توازن</div>
+                    `},
+                    { title: "الدرس 5: الفجوة الانكماشية والتضخمية", html: `
+                        <h2 class="slide-title">الفجوات الاقتصادية (Slides 14-18)</h2>
+                        <div class="step-box" style="border-right-color: var(--danger);">
+                            <h3 style="color:var(--danger);">1. الفجوة الانكماشية (Recessionary Gap)</h3>
+                            <p>تحدث عندما يكون <strong>Y* < Yf</strong> (الاقتصاد في حالة ركود).</p>
+                            <p><strong>الأسباب:</strong> عدم رغبة المستهلكين والمستثمرين في الإنفاق (انخفاض C و I). انخفاض الإنفاق الحكومي (G). ضعف الطلب الخارجي على السلع المحلية (انخفاض X).</p>
+                            <p><strong>النتيجة:</strong> انخفاض الطلب على الأيدي العاملة ← ارتفاع معدل البطالة.</p>
+                        </div>
+                        <div class="step-box" style="border-right-color: var(--warning);">
+                            <h3 style="color:var(--warning);">2. الفجوة التضخمية (Inflationary Gap)</h3>
+                            <p>تحدث عندما يكون <strong>Y* > Yf</strong> (الاقتصاد في حالة تضخم).</p>
+                            <p><strong>الأسباب:</strong> ارتفاع أحد عناصر الطلب الكلي (مثل زيادة الاستثمار) بشكل يفوق الطاقة الإنتاجية المحلية.</p>
+                            <p><strong>النتيجة:</strong> نقص المخزون، ارتفاع الأسعار، وتضخم.</p>
+                        </div>
+                    `},
+                    { title: "الدرس 6: التنسيق بين الاستثمار والادخار", html: `
+                        <h2 class="slide-title">العلاقة بين الادخار والاستثمار (Slide 19-20)</h2>
+                        <p>التوازن في الاقتصاد يعتمد على العلاقة بين الادخار (S) والاستثمار (I) عند مستوى التوظيف الكامل:</p>
+                        <ul>
+                            <li><strong>حالة التوازن:</strong> عندما يتساوى الادخار مع الاستثمار (S = I).</li>
+                            <li><strong>فجوة انكماشية:</strong> عندما يكون الادخار أكبر من الاستثمار (S > I).</li>
+                            <li><strong>فجوة تضخمية:</strong> عندما يكون الاستثمار أكبر من الادخار (I > S).</li>
+                        </ul>
+                        <h3>لماذا تحدث الفجوات في الاقتصاد الحر؟</h3>
+                        <ol>
+                            <li><strong>عدم تجانس خطط المستثمرين والمدخرين:</strong> هم فئات مختلفة ولهم دوافع مختلفة.</li>
+                            <li><strong>صعوبة التوقع:</strong> قرارات الاستثمار والادخار تتم في فترات زمنية مختلفة.</li>
+                        </ol>
+                        <div class="real-world"><h4>💡 مقارنة بالنظم الاقتصادية</h4><p>عانت الدول الغربية (الرأسمالية) من مشاكل التذبذب الاقتصادي. بينما الدول التي تتبع التخطيط المركزي (الاشتراكية) لم تعانِ كثيراً لأن جهاز التخطيط يحدد كميات الاستثمار.</p></div>
+                    `}
+                ],
+                summary: `<h2 class="slide-title">📝 الملخص الشامل للفصل الرابع</h2><ul><li><strong>التوازن:</strong> يتحقق عندما يتساوى الطلب الكلي (AD = C+I+G+X-M) مع العرض الكلي (AS = Y).</li><li><strong>الاختلال:</strong> إذا زاد الطلب عن العرض، يقل المخزون ويزيد الإنتاج.</li><li><strong>الفجوة الانكماشية:</strong> توازن أقل من التوظيف الكامل (Y* < Yf)، تؤدي لبطالة.</li><li><strong>الفجوة التضخمية:</strong> توازن أعلى من التوظيف الكامل (Y* > Yf)، تؤدي لتضخم.</li></ul>`,
+                quiz: [
+                    { q: "شرط توازن الدخل القومي هو:", options: ["AD > AS", "AD = AS", "S = C", "I = G"], a: 1, exp: "التوازن يحدث عندما يتساوى الطلب الكلي مع العرض الكلي." },
+                    { q: "إذا كان AD > AS، فإن رجال الأعمال:", options: ["يخفضون الإنتاج", "يسحبون من المخزون ويزيدون الإنتاج", "يرفعون الضرائب", "يخفضون الأسعار"], a: 1, exp: "زيادة الطلب تؤدي لنقص المخزون، مما يشجع على زيادة الإنتاج." },
+                    { q: "في حالة AS > AD، ماذا يحدث للمخزون؟", options: ["ينخفض", "يزداد ويتراكم", "يبقى ثابتاً", "ينعدم"], a: 1, exp: "عدم بيع الإنتاج يؤدي لتراكمه في المخازن." },
+                    { q: "الفجوة الانكماشية تحدث عندما:", options: ["Y* > Yf", "Y* = Yf", "Y* < Yf", "AD = AS"], a: 2, exp: "التوازن أقل من مستوى التوظيف الكامل يعني وجود بطالة." },
+                    { q: "من أسباب الفجوة الانكماشية:", options: ["ارتفاع الاستهلاك", "انخفاض الإنفاق الكلي", "زيادة الصادرات", "انخفاض الضرائب"], a: 1, exp: "انخفاض الإنفاق الاستهلاكي أو الاستثماري أو الحكومي." },
+                    { q: "لعلاج الفجوة الانكماشية، يجب على الحكومة:", options: ["زيادة الضرائب", "خفض الإنفاق", "زيادة الإنفاق الحكومي", "زيادة الواردات"], a: 2, exp: "لزيادة الطلب الكلي، تزيد الحكومة إنفاقها." },
+                    { q: "الفجوة التضخمية تحدث عندما:", options: ["Y* < Yf", "Y* = Yf", "Y* > Yf", "AD < AS"], a: 2, exp: "الطلب مرتفع لدرجة أن التوازن يحدث فوق مستوى التوظيف الكامل." },
+                    { q: "ما هي النتيجة المباشرة للفجوة التضخمية؟", options: ["بطالة", "كساد", "ارتفاع الأسعار", "انخفاض الإنتاج"], a: 2, exp: "الطلب يتجاوز الطاقة الإنتاجية فيرتفع السعر." },
+                    { q: "في الاقتصاد الحر، تحدث الفجوات بسبب:", options: ["تدخل الحكومة", "عدم تجانس خطط المدخرين والمستثمرين", "التخطيط المركزي", "ثبات الأسعار"], a: 1, exp: "المدخرون والمستثمرون لديهم دوافع وتوقيتات مختلفة." },
+                    { q: "الدول الاشتراكية تعاني من التذبذبات الاقتصادية:", options: ["أكثر", "بنفس القدر", "أقل", "لا تعاني أبداً"], a: 2, exp: "لأن جهاز التخطيط المركزي يحدد كميات الاستثمار." },
+                    { q: "قانون الطلب الكلي هو:", options: ["AD = C + I + G + (X - M)", "AD = C + I + G + (X + M)", "AD = Y", "AD = S + I"], a: 0, exp: "الطلب الكلي هو مجموع الإنفاق الكلي." },
+                    { q: "عندما يتقاطع منحنى AD مع خط 45 درجة، فإن ذلك يمثل:", options: ["تضخم", "كساد", "نقطة التوازن", "مستوى التوظيف الكامل"], a: 2, exp: "خط 45 يمثل العرض، والتقاطع هو التوازن." },
+                    { q: "إذا كان التوازن الحالي أقل من التوظيف الكامل، فهناك:", options: ["فجوة تضخمية", "فجوة انكماشية", "توازن كامل", "تضخم ركودي"], a: 1, exp: "التوازن الأقل من Yf يعني بطالة." },
+                    { q: "أي من التالي ليس من مكونات الطلب الكلي؟", options: ["الاستهلاك (C)", "الاستثمار (I)", "الادخار (S)", "الإنفاق الحكومي (G)"], a: 2, exp: "الادخار هو جزء من الدخل غير المستهلك." },
+                    { q: "في حالة AS > AD، ماذا يحدث للأسعار؟", options: ["ترتفع", "تنخفض", "تبقى ثابتة", "لا علاقة"], a: 1, exp: "تراكم المخزون يدفع المنتجين لتخفيض الأسعار." },
+                    { q: "زيادة الطلب في حالة الفجوة التضخمية تؤدي إلى:", options: ["زيادة الإنتاج فقط", "زيادة الأسعار فقط", "انخفاض الأسعار", "انخفاض البطالة للصفر"], a: 1, exp: "لا يمكن زيادة الإنتاج، فتترجم الزيادة لأسعار أعلى." },
+                    { q: "الفرق بين Y* و Yf يسمى:", options: ["المضاعف", "الفجوة", "الميل الحدي", "التسرب"], a: 1, exp: "هو الفجوة بين التوازن الحالي والتوظيف الكامل." },
+                    { q: "إذا كان I > S عند التوظيف الكامل، فهذا يشير إلى:", options: ["فجوة انكماشية", "فجوة تضخمية", "توازن", "انخفاض الطلب"], a: 1, exp: "زيادة الاستثمار عن الادخار ترفع الطلب وتسبب تضخماً." },
+                    { q: "الاستهلاك يعتمد بشكل أساسي على:", options: ["سعر الفائدة", "الدخل المتاح", "سعر الصرف", "الواردات"], a: 1, exp: "الاستهلاك دالة في الدخل المتاح." },
+                    { q: "لإزالة الفجوة التضخمية، تلجأ الحكومة إلى:", options: ["زيادة الإنفاق", "خفض الضرائب", "خفض الإنفاق الحكومي", "زيادة الصادرات"], a: 2, exp: "لتقليل الطلب الكلي الزائد." }
+                ]
+            },
+            ch5: {
+                slides: [
+                    { title: "الدرس 1: أنواع الضرائب والدخل المتاح", html: `
+                        <h2 class="slide-title">أنواع الضرائب والدخل المتاح (Slides 2-4)</h2>
+                        <p>لفهم نظرية المضاعف بعمق، يجب أولاً فهم كيف تؤثر الضرائب على <span class="term" data-tooltip="الدخل المتاح (Disposable Income) = Y - T">Yd</span>.</p>
+                        <table class="data-table">
+                            <thead><tr><th>نوع الضريبة</th><th>المعادلة الرياضية</th><th>الشرح</th></tr></thead>
+                            <tbody>
+                                <tr><td><strong>ضريبة ثابتة</strong></td><td class="math-block" style="margin:0; padding:0.5rem;">T = T0</td><td>مبلغ ثابت يدفع بغض النظر عن مستوى الدخل.</td></tr>
+                                <tr><td><strong>ضريبة نسبية</strong></td><td class="math-block" style="margin:0; padding:0.5rem;">T = tY</td><td>مرتبطة بمستوى الدخل (t = معدل الضريبة).</td></tr>
+                                <tr><td><strong>ضريبة مزدوجة</strong></td><td class="math-block" style="margin:0; padding:0.5rem;">T = T0 + tY</td><td>مزيج من الضريبة الثابتة والنسبية.</td></tr>
+                            </tbody>
+                        </table>
+                        <p>بالتالي، الدخل المتاح للاستهلاك هو: <strong>Yd = Y - T</strong>.</p>
+                    `},
+                    { title: "الدرس 2: الاشتقاق الجبري (الضريبة المزدوجة)", html: `
+                        <h2 class="slide-title">الاشتقاق الرياضي الكامل (Slides 5-6)</h2>
+                        <div class="step-box">
+                            <h4>الخطوة 1: دالة الاستهلاك (C)</h4>
+                            <p>نعلم أن: C = a + bYd (حيث a هو الاستهلاك التلقائي، و b هو <span class="term" data-tooltip="الميل الحدي للاستهلاك (MPC)">MPC</span>). نعوض بـ Yd = Y - T ونفترض ضريبة مزدوجة T = T0 + tY:</p>
+                            <div class="math-block">C = a + b [Y - (T0 + tY)]<br>C = a + b [Y - T0 - tY]<br>C = a - bT0 + bY - btY<br><span class="highlight">C = a - bT0 + bY(1 - t)</span></div>
+                        </div>
+                        <div class="step-box">
+                            <h4>الخطوة 2: دخل التوازن (Y*)</h4>
+                            <p>نعلم أن شرط التوازن في اقتصاد مغلق هو: Y = C + I + G. ونفترض أن I و G متغيران مستقلان (I = I0, G = G0).</p>
+                            <div class="math-block">Y = [a - bT0 + bY(1 - t)] + I0 + G0<br>Y - bY(1 - t) = a - bT0 + I0 + G0<br>Y [1 - b(1 - t)] = A0<br>Y [1 - b + bt] = A0<br><span class="highlight">Y* = 1 / (1 - b + bt) * A0</span></div>
+                            <p>حيث المقدار <strong>1 / (1 - b + bt)</strong> هو <span class="term" data-tooltip="معامل المضاعف (Multiplier)">Mr</span>.</p>
+                        </div>
+                    `},
+                    { title: "الدرس 3: محاكاة دورات المضاعف (سابك)", html: `
+                        <h2 class="slide-title">مثال استثمار شركة سابك (Slide 11-12)</h2>
+                        <p>قررت شركة سابك استثمار 1 مليون ريال. بافتراض أن b = 0.75.</p>
+                        <table class="data-table">
+                            <thead><tr><th>رقم الدورة</th><th>الإنفاق في الدورة</th><th>الإجمالي التراكمي للدخل (Y)</th></tr></thead>
+                            <tbody>
+                                <tr><td>1</td><td>1,000,000</td><td>1,000,000</td></tr><tr><td>2</td><td>750,000</td><td>1,750,000</td></tr>
+                                <tr><td>3</td><td>562,500</td><td>2,312,500</td></tr><tr><td>4</td><td>421,875</td><td>2,734,375</td></tr>
+                                <tr><td>5</td><td>316,406</td><td>3,050,781</td></tr><tr><td>6</td><td>237,305</td><td>3,288,086</td></tr>
+                                <tr class="highlight-row"><td>∞</td><td>0</td><td>4,000,000</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="math-block">Mr = 1 / (1 - 0.75) = 4<br>ΔY = Mr * ΔI = 4 * 1,000,000 = 4,000,000 ريال</div>
+                    `},
+                    { title: "الدرس 4: أنواع المضاعفات والميزانية", html: `
+                        <h2 class="slide-title">المضاعفات والميزانية الحكومية (Slides 10-24)</h2>
+                        <h3>1. أنواع المضاعفات:</h3>
+                        <ul>
+                            <li><strong>مضاعف الاستثمار (Mr):</strong> ΔY / ΔI = Mr</li>
+                            <li><strong>مضاعف الإنفاق الحكومي (Mr):</strong> ΔY / ΔG = Mr (يساوي مضاعف الاستثمار).</li>
+                            <li><strong>مضاعف الضريبة الثابتة:</strong> ΔY / ΔT = -b(Mr). (إشارته سالبة لأنه تسرب).</li>
+                        </ul>
+                        <h3>2. الميزانية الحكومية (BS):</h3>
+                        <div class="math-block">BS = T - G</div>
+                        <ul><li>إذا T > G: فائض (BS > 0).</li><li>إذا T < G: عجز (BS < 0).</li><li>إذا T = G: توازن (BS = 0).</li></ul>
+                        <h3>3. الميزان التجاري (صافي الصادرات NX):</h3>
+                        <div class="math-block">NX = X - M</div>
+                    `},
+                    { title: "الدرس 5: تمرين محلول 1 (اقتصاد مغلق)", html: `
+                        <h2 class="slide-title">تمرين (1) محلول بالتفصيل (Slides 25-27)</h2>
+                        <p><strong>المعطيات:</strong> اقتصاد مغلق: Y = C + I + G. حيث: C = 100 + 0.75Yd، T = 100، I = 200، G = 100.</p>
+                        <div class="step-box"><h4>المطلوب 1: إيجاد دالة الاستهلاك</h4>
+                            <div class="math-block">C = 100 + 0.75(Y - T)<br>C = 100 + 0.75(Y - 100)<br>C = 100 + 0.75Y - 75<br><span class="highlight">C = 25 + 0.75Y</span></div>
+                        </div>
+                        <div class="step-box"><h4>المطلوب 2: الدخل التوازني (Y*)</h4>
+                            <p>طريقة 1 (بالتعويض):</p>
+                            <div class="math-block">Y = C + I + G<br>Y = (25 + 0.75Y) + 200 + 100<br>Y = 325 + 0.75Y<br>Y - 0.75Y = 325<br>0.25Y = 325<br><span class="highlight">Y = 325 / 0.25 = 1300</span></div>
+                        </div>
+                        <div class="step-box"><h4>المطلوب 3: حسابات إضافية</h4>
+                            <ul>
+                                <li><strong>الاستهلاك (C):</strong> C = 25 + 0.75(1300) = 1000.</li>
+                                <li><strong>الدخل المتاح (Yd):</strong> Yd = 1300 - 100 = 1200.</li>
+                                <li><strong>الادخار (S):</strong> S = Yd - C = 1200 - 1000 = 200.</li>
+                                <li><strong>المضاعف (Mr):</strong> Mr = 1 / (1 - 0.75) = 4.</li>
+                                <li><strong>مضاعف الضريبة:</strong> -b(Mr) = -0.75 * 4 = -3.</li>
+                                <li><strong>الميزانية الحكومية:</strong> BS = T - G = 100 - 100 = 0 (توازن).</li>
+                            </ul>
+                        </div>
+                    `},
+                    { title: "الدرس 6: تمرين محلول 2 (اقتصاد مفتوح)", html: `
+                        <h2 class="slide-title">تمرين (2) محلول: الاقتصاد المفتوح (Slides 34-37)</h2>
+                        <p>في الاقتصاد المفتوح، نضيف الواردات (M) كدالة في الدخل: M = M0 + mY. الصادرات (X) تعتبر مستقلة.</p>
+                        <p><strong>المعطيات:</strong> C = 300 + 0.75Yd، T = 0.2Y (ضريبة نسبية)، I = 900، G = 1300، X = 1000، M = 1100 (واردات تلقائية ثابتة، m=0).</p>
+                        <div class="step-box"><h4>المطلوب 1: إيجاد دالة الاستهلاك والدخل التوازني</h4>
+                            <div class="math-block">C = 300 + 0.75(Y - 0.2Y) = 300 + 0.75(0.8Y) = 300 + 0.6Y<br><br>Y = C + I + G + (X - M)<br>Y = (300 + 0.6Y) + 900 + 1300 + (1000 - 1100)<br>Y = 2400 + 0.6Y<br>Y - 0.6Y = 2400<br>0.4Y = 2400<br><span class="highlight">Y = 2400 / 0.4 = 6000</span></div>
+                        </div>
+                        <div class="step-box"><h4>المطلوب 2: الحسابات الإضافية</h4>
+                            <ul>
+                                <li><strong>الاستهلاك (C):</strong> C = 300 + 0.6(6000) = 3900.</li>
+                                <li><strong>الضرائب (T):</strong> T = 0.2 * 6000 = 1200.</li>
+                                <li><strong>الدخل المتاح (Yd):</strong> Yd = 6000 - 1200 = 4800.</li>
+                                <li><strong>الادخار (S):</strong> S = -300 + (1 - 0.75) * 4800 = -300 + 1200 = 900.</li>
+                                <li><strong>المضاعف (Mr):</strong> Mr = 1 / (1 - 0.75 + 0.75*0.2 + 0) = 1 / 0.4 = 2.5.</li>
+                                <li><strong>الميزان التجاري:</strong> NX = X - M = 1000 - 1100 = -100 (عجز).</li>
+                            </ul>
+                        </div>
+                    `}
+                ],
+                summary: `<h2 class="slide-title">📝 الملخص الشامل للفصل الخامس</h2><ul><li><strong>المضاعف:</strong> يقيس التغير في الناتج التوازني نتيجة تغير في متغير مستقل.</li><li><strong>الاشتقاق:</strong> يعتمد على تعويض دالة الاستهلاك C = a + b(Y-T) في شرط التوازن.</li><li><strong>قانون المضاعف (مغلق):</strong> Mr = 1 / (1-b+bt).</li><li><strong>قانون المضاعف (مفتوح):</strong> Mr = 1 / (1 - b + bt + m).</li><li><strong>مضاعف الضريبة:</strong> يحمل إشارة سالبة لأنه يقلل الدخل المتاح.</li><li><strong>الميزانية الحكومية:</strong> BS = T - G (فائض، عجز، توازن).</li></ul>`,
+                quiz: [
+                    { q: "المضاعف هو:", options: ["التغير في الاستهلاك", "الأثر المرتب على تغير متغير مستقل على الدخل", "الفرق بين الصادرات والواردات", "معدل الضريبة"], a: 1, exp: "يقيس كيف يؤدي تغير في I أو G إلى تغير أكبر في Y." },
+                    { q: "قانون مضاعف الاستثمار في اقتصاد مغلق بدون ضرائب:", options: ["1 / (1 - b)", "1 / b", "1 - b", "b / (1 - b)"], a: 0, exp: "المضاعف = 1 / (1 - الميل الحدي للاستهلاك)." },
+                    { q: "إذا كان b = 0.8، فإن مضاعف الإنفاق:", options: ["4", "5", "8", "1.25"], a: 1, exp: "Mr = 1 / (1 - 0.8) = 5." },
+                    { q: "زيادة الاستثمار بمقدار 100 والمضاعف 4، يعني زيادة الدخل:", options: ["25", "100", "400", "40"], a: 2, exp: "ΔY = 4 * 100 = 400." },
+                    { q: "مضاعف الضريبة الثابتة يحمل إشارة:", options: ["موجبة", "سالبة", "صفر", "لا نهائية"], a: 1, exp: "الضريبة تسرب، زيادتها تقلل الدخل." },
+                    { q: "مضاعف الضريبة دائماً:", options: ["أكبر من الإنفاقي", "مساوٍ للإنفاقي", "أقل من الإنفاقي", "لا علاقة"], a: 2, exp: "لأن جزءاً من التخفيض الضريبي يتم ادخاره." },
+                    { q: "في الاقتصاد المفتوح، الاستيراد (M) يعتبر:", options: ["حقناً", "تسرباً", "استثماراً", "لا يؤثر"], a: 1, exp: "إنفاق على سلع أجنبية يخرج من الدورة الداخلية." },
+                    { q: "قانون مضاعف الاقتصاد المفتوح:", options: ["1 / (1 - b)", "1 / (1 - b + bt + m)", "1 / (1 + b)", "1 / (b + t + m)"], a: 1, exp: "نضيف t و m لأنهما تسربات." },
+                    { q: "الميزان الحكومي (BS) يساوي:", options: ["T + G", "T - G", "G - T", "T * G"], a: 1, exp: "الإيرادات ناقص المصروفات." },
+                    { q: "إذا T = 100 و G = 120، الميزانية:", options: ["فائض", "توازن", "عجز", "تضخم"], a: 2, exp: "100 - 120 = -20 (عجز)." },
+                    { q: "صافي الصادرات يساوي:", options: ["X + M", "X - M", "M - X", "X / M"], a: 1, exp: "الصادرات ناقص الواردات." },
+                    { q: "إذا X = 500 و M = 600، الميزان التجاري:", options: ["فائض", "عجز", "توازن", "لا يمكن حسابه"], a: 1, exp: "500 - 600 = -100 (عجز)." },
+                    { q: "مضاعف الصادرات هو:", options: ["1 / (1 - b)", "1 / (1 - b + m)", "1 / m", "b / (1 - m)"], a: 1, exp: "نفس مضاعف الإنفاق في اقتصاد مفتوح." },
+                    { q: "زيادة G بمقدار 200 ومضاعف 4 تعني زيادة Y بـ:", options: ["200", "400", "800", "600"], a: 2, exp: "4 * 200 = 800." },
+                    { q: "الميل الحدي للاستهلاك (b) هو:", options: ["ΔC / ΔY", "ΔY / ΔC", "C / Y", "1"], a: 0, exp: "نسبة الزيادة في الاستهلاك للزيادة في الدخل." },
+                    { q: "مع ضريبة ثابتة، الدخل المتاح Yd:", options: ["Y", "Y + T", "Y - T", "Y * T"], a: 2, exp: "الدخل بعد خصم الضرائب." },
+                    { q: "الحقن تشمل:", options: ["الاستثمار، الإنفاق الحكومي، الصادرات", "الادخار، الضرائب، الواردات", "الاستهلاك فقط", "الصادرات والواردات"], a: 0, exp: "إضافات للدخل." },
+                    { q: "مع ضريبة نسبية، المضاعف:", options: ["1 / (1 - b)", "1 / (1 - b(1-t))", "1 / (1 - b + bt)", "ب و ج صحيحان"], a: 3, exp: "رياضياً متساويان." },
+                    { q: "إذا كان المضاعف 5، فإن MPS:", options: ["0.2", "0.8", "0.5", "1"], a: 0, exp: "Mr = 1/MPS => 5 = 1/MPS => MPS = 0.2." },
+                    { q: "زيادة الضرائب تؤدي إلى:", options: ["زيادة الدخل", "خفض الدخل", "لا تؤثر", "زيادة المضاعف"], a: 1, exp: "تقلل الدخل المتاح والاستهلاك." }
+                ]
+            },
+            ch6: {
+                slides: [
+                    { title: "الدرس 1: منحنى العرض الكلي وانتقاله", html: `
+                        <h2 class="slide-title">منحنى AS وعوامل انتقاله (Slides 2-7)</h2>
+                        <p>يوضح منحنى <span class="term" data-tooltip="العرض الكلي (Aggregate Supply)">AS</span> كمية السلع والخدمات النهائية التي يرغب المنتجون في بيعها عند مستويات الأسعار المختلفة.</p>
+                        <p>المنحنى ذو <strong>ميل موجب</strong>، لأن: <strong>ربح الوحدة = سعر البيع - تكلفة الإنتاج</strong>. ارتفاع السعر (مع ثبات التكاليف) يزيد الربح ويشجع الإنتاج.</p>
+                        <h3>عوامل انتقال منحنى AS:</h3>
+                        <ul>
+                            <li><strong>لليسار (انخفاض العرض):</strong> ارتفاع معدلات الأجر النقدي، أو ارتفاع أسعار مدخلات الإنتاج الأخرى (مثل الطاقة).</li>
+                            <li><strong>لليمين (زيادة العرض):</strong> التقدم التقني وزيادة الإنتاجية (يقلل التكاليف ويزيد الأرباح).</li>
+                        </ul>
+                        <div class="real-world"><h4>💡 ربط بالواقع</h4><p>أزمة النفط 1973: ارتفعت أسعار الطاقة (مدخل إنتاج أساسي)، مما رفع التكاليف عالمياً، فانتقل منحنى العرض الكلي لليسار، مما أدى إلى تضخم ركودي.</p></div>
+                    `},
+                    { title: "الدرس 2: توازن AS و AD والتفاعل", html: `
+                        <h2 class="slide-title">التوازن والفجوات في نموذج AS/AD</h2>
+                        <p>يتحدد التوازن العام عند تقاطع AS مع AD. انقر على المصطلحات في النص أدناه لرؤية تأثيرها:</p>
+                        <div class="graph-container">
+                            <svg viewBox="0 0 600 400" id="ch6-chart">
+                                <line x1="80" y1="350" x2="550" y2="350" stroke="var(--text-muted)" stroke-width="2" />
+                                <line x1="80" y1="350" x2="80" y2="50" stroke="var(--text-muted)" stroke-width="2" />
+                                <text x="550" y="370" fill="var(--text-muted)" font-size="14" text-anchor="end">الناتج (Y)</text>
+                                <text x="60" y="50" fill="var(--text-muted)" font-size="14" text-anchor="end">الأسعار (P)</text>
+                                <line x1="350" y1="50" x2="350" y2="350" stroke="var(--secondary)" stroke-width="2" stroke-dasharray="5,5" />
+                                <text x="350" y="40" fill="var(--secondary)" font-size="14" text-anchor="middle" font-weight="bold">YF (التوظيف الكامل)</text>
+                                <line id="as-line-6" x1="100" y1="330" x2="500" y2="100" stroke="#3b82f6" stroke-width="3" />
+                                <text id="as-label-6" x="510" y="100" fill="#3b82f6" font-size="16" font-weight="bold">AS</text>
+                                <line id="ad-line-6" x1="150" y1="80" x2="450" y2="300" stroke="var(--danger)" stroke-width="3" />
+                                <text id="ad-label-6" x="460" y="310" fill="var(--danger)" font-size="16" font-weight="bold">AD</text>
+                                <circle id="eq-point-6" cx="300" cy="195" r="8" fill="var(--primary)" />
+                                <text id="eq-label-6" x="300" y="175" fill="var(--primary)" font-size="14" text-anchor="middle" font-weight="bold">E</text>
+                            </svg>
+                        </div>
+                        <div id="ch6-explanation" style="text-align:center; padding:1.5rem; background:var(--bg); border-radius:0.5rem; font-weight:bold; color:var(--text); border:1px solid var(--border);">
+                            الاقتصاد في حالة توازن. جرب: <br><br>
+                            <span class="interactive-text" onclick="updateCh6Graph('gap-def', this)">فجوة انكماشية</span> &nbsp;|&nbsp; 
+                            <span class="interactive-text" onclick="updateCh6Graph('gap-inf', this)">فجوة تضخمية</span> &nbsp;|&nbsp; 
+                            <span class="interactive-text" onclick="updateCh6Graph('eq', this)">إعادة تعيين</span>
+                        </div>
+                    `},
+                    { title: "الدرس 3: لماذا لا تنخفض الأجور؟ (نظري)", html: `
+                        <h2 class="slide-title">آلية التصحيح الذاتي وندرة انخفاض الأسعار (Slides 14-15)</h2>
+                        <p>في حالة الفجوة الانكماشية، تنص النظرية الكلاسيكية على أن البطالة ستؤدي لانخفاض الأجور، مما يقلل التكاليف، فينتقل AS لليمين وتزول الفجوة.</p>
+                        <p><strong>لكن في الواقع، ندرة حدوث انخفاض الأسعار والأجور تعود لثلاثة أسباب رئيسية:</strong></p>
+                        <div class="step-box"><h3>1. تدخل الحكومة وقوانين العمل</h3><p>تفرض الحكومات في كثير من الدول "قانون الحد الأدنى للأجور". هذا يمنع الأجور من الانخفاض إلى المستوى الذي يسمح بتوازن السوق، مما يعيق آلية التصحيح الذاتي.</p></div>
+                        <div class="step-box"><h3>2. هجرة العمالة الماهرة</h3><p>تخفيض الأجور يؤدي لترك العمال المهرة لأعمالهم والبحث عن فرص مناسبة في أماكن أخرى. هذا يضر الشركات التي تفقد كفاءاتها، ولهذا يفضل أصحاب الأعمال عدم تغيير الأجور للحفاظ على المهرة.</p></div>
+                        <div class="step-box"><h3>3. التأثير السلبي على نفسية العامل وإنتاجيته</h3><p>انخفاض الأجر يؤدي إلى عدم جدية العامل في العمل، وانخفاض الحافز الإبداعي لديه، مما يؤثر سلباً على جودة المنتج النهائي وإنتاجيته. لذلك، لا يلجأ أصحاب العمل لتخفيض الأجور إلا كخيار أخير.</p></div>
+                    `},
+                    { title: "الدرس 4: التضخم الركودي (التحليل العميق)", html: `
+                        <h2 class="slide-title">التضخم الركودي (Stagflation) (Slides 19-21)</h2>
+                        <p>هو حالة نادرة وصعبة: انخفاض الناتج المحلي الإجمالي <strong>مع</strong> ارتفاع الأسعار في نفس الوقت.</p>
+                        <div class="graph-container">
+                            <svg viewBox="0 0 600 400" id="ch6-chart-2">
+                                <line x1="80" y1="350" x2="550" y2="350" stroke="var(--text-muted)" stroke-width="2" />
+                                <line x1="80" y1="350" x2="80" y2="50" stroke="var(--text-muted)" stroke-width="2" />
+                                <text x="550" y="370" fill="var(--text-muted)" font-size="14" text-anchor="end">الناتج (Y)</text>
+                                <text x="60" y="50" fill="var(--text-muted)" font-size="14" text-anchor="end">الأسعار (P)</text>
+                                <line x1="350" y1="50" x2="350" y2="350" stroke="var(--secondary)" stroke-width="2" stroke-dasharray="5,5" />
+                                <text x="350" y="40" fill="var(--secondary)" font-size="14" text-anchor="middle" font-weight="bold">YF</text>
+                                <line id="as-line-6b" x1="100" y1="330" x2="500" y2="100" stroke="#3b82f6" stroke-width="3" />
+                                <text x="510" y="100" fill="#3b82f6" font-size="16" font-weight="bold">AS</text>
+                                <line id="ad-line-6b" x1="150" y1="80" x2="450" y2="300" stroke="var(--danger)" stroke-width="3" />
+                                <text x="460" y="310" fill="var(--danger)" font-size="16" font-weight="bold">AD</text>
+                                <circle id="eq-point-6b" cx="300" cy="195" r="8" fill="var(--primary)" />
+                                <text id="eq-label-6b" x="300" y="175" fill="var(--primary)" font-size="14" text-anchor="middle" font-weight="bold">E</text>
+                            </svg>
+                        </div>
+                        <div id="ch6-explanation-2" style="text-align:center; padding:1.5rem; background:var(--bg); border-radius:0.5rem; font-weight:bold; color:var(--text); border:1px solid var(--border);">
+                            انقر لرؤية أنواع التضخم الركودي:<br><br>
+                            <span class="interactive-text" onclick="updateStagGraph('supply', this)">تضخم ركودي من جانب العرض</span> &nbsp;|&nbsp; 
+                            <span class="interactive-text" onclick="updateStagGraph('demand', this)">تضخم ركودي من جانب الطلب</span> &nbsp;|&nbsp; 
+                            <span class="interactive-text" onclick="updateStagGraph('reset', this)">إعادة تعيين</span>
+                        </div>
+                    `},
+                    { title: "الدرس 5: غرفة محاكاة الاقتصاد الكلي", html: `
+                        <h2 class="slide-title">غرفة محاكاة الاقتصاد (دمج الفصول)</h2>
+                        <p>هنا ندمج الفصل الرابع (التوازن) والخامس (المضاعف) والسادس (العرض والطلب). افترض أن الاقتصاد يبدأ عند توازن (Y*=6000)، ومستوى التوظيف الكامل (YF=7000).</p>
+                        <div class="sim-container">
+                            <div class="sim-inputs">
+                                <div><label>الميل الحدي للاستهلاك (b):</label><input type="number" id="sim-b" value="0.75" step="0.05" min="0" max="1" oninput="runSimulation()"></div>
+                                <div><label>معدل الضريبة (t):</label><input type="number" id="sim-t" value="0.2" step="0.05" min="0" max="1" oninput="runSimulation()"></div>
+                            </div>
+                            <div class="sim-slider-box">
+                                <h3>تغيير الإنفاق الحكومي (ΔG): <span id="sim-g-val" style="color:var(--primary);">0</span> مليون</h3>
+                                <p>المضاعف الحالي: <span id="sim-mr-val" style="color:var(--secondary); font-weight:bold;">4.00</span></p>
+                                <input type="range" id="sim-g-slider" min="-300" max="300" value="0" step="50" oninput="runSimulation()">
+                            </div>
+                            <div class="graph-container">
+                                <svg viewBox="0 0 600 400" id="sim-chart">
+                                    <line x1="80" y1="350" x2="550" y2="350" stroke="var(--text-muted)" stroke-width="2" />
+                                    <line x1="80" y1="350" x2="80" y2="50" stroke="var(--text-muted)" stroke-width="2" />
+                                    <text x="550" y="370" fill="var(--text-muted)" font-size="14" text-anchor="end">الناتج (Y)</text>
+                                    <text x="60" y="50" fill="var(--text-muted)" font-size="14" text-anchor="end">الأسعار (P)</text>
+                                    <line x1="350" y1="50" x2="350" y2="350" stroke="var(--secondary)" stroke-width="2" stroke-dasharray="5,5" />
+                                    <text x="350" y="40" fill="var(--secondary)" font-size="14" text-anchor="middle" font-weight="bold">YF (التوظيف الكامل)</text>
+                                    <line id="sim-as" x1="100" y1="300" x2="500" y2="50" stroke="#3b82f6" stroke-width="3" />
+                                    <line id="sim-ad" x1="150" y1="80" x2="450" y2="300" stroke="var(--danger)" stroke-width="3" />
+                                    <circle id="sim-eq" cx="289" cy="182" r="8" fill="var(--primary)" />
+                                </svg>
+                            </div>
+                            <div id="sim-analysis" class="sim-analysis">الاقتصاد في حالة توازن. الأثر المضاعف لم يطبق بعد.</div>
+                        </div>
+                    `}
+                ],
+                summary: `<h2 class="slide-title">📝 الملخص الشامل للفصل السادس</h2><ul><li><strong>منحنى AS:</strong> علاقة طردية بين السعر والكمية المعروضة.</li><li><strong>انتقال AS:</strong> لليسار عند ارتفاع التكاليف، ولليمين عند التقدم التقني.</li><li><strong>صلابة الأجور:</strong> أسبابها (قوانين الحد الأدنى، هجرة المهرة، تأثير الأجر المنخفض على الإنتاجية) تمنع التصحيح الذاتي السريع.</li><li><strong>التضخم الركودي:</strong> ارتفاع الأسعار مع انخفاض الإنتاج.</li></ul>`,
+                quiz: [
+                    { q: "منحنى العرض الكلي يوضح العلاقة بين:", options: ["الأسعار والكمية المطلوبة", "الأسعار والكمية المعروضة", "الدخل والاستهلاك", "الاستثمار والفائدة"], a: 1, exp: "الكمية التي يرغب المنتجون ببيعها عند أسعار مختلفة." },
+                    { q: "منحنى العرض الكلي له ميل:", options: ["سالب", "موجب", "أفقي", "عمودي"], a: 1, exp: "علاقة طردية: سعر أعلى = هامش ربح أعلى = كمية معروضة أكبر." },
+                    { q: "إذا ارتفعت الأجور، فإن منحنى AS:", options: ["لليمين", "لليسار", "ثابت", "أفقي"], a: 1, exp: "ارتفاع التكاليف يقلل الأرباح فيقل العرض." },
+                    { q: "التقدم التقني يؤدي إلى:", options: ["AS لليسار", "AS لليمين", "AD لليسار", "لا تأثير"], a: 1, exp: "يزيد الإنتاجية ويقلل التكاليف فيزيد العرض." },
+                    { q: "التوازن الكلي يحدث عند تقاطع:", options: ["AS مع AD", "AS مع YF", "AD مع YF", "خط 45 مع YF"], a: 0, exp: "تقاطع العرض والطلب الكلي." },
+                    { q: "إذا كان السعر أعلى من سعر التوازن، فهناك:", options: ["فائض طلب", "فائض عرض", "توازن", "تضخم"], a: 1, exp: "السعر المرتفع يقلل الطلب ويزيد العرض فيتراكم الفائض." },
+                    { q: "الفجوة الانكماشية في نموذج AS/AD تعني:", options: ["توازن > YF", "توازن < YF", "توازن = YF", "AS لليمين"], a: 1, exp: "الطلب ضعيف فيحدث التوازن تحت مستوى التوظيف الكامل." },
+                    { q: "من أسباب ندرة انخفاض الأجور في الواقع:", options: ["مرونة الأجور", "قوانين الحد الأدنى للأجور", "انخفاض التكاليف", "زيادة الإنتاجية"], a: 1, exp: "تفرض الحكومات حداً أدنى للأجور يمنع انخفاضها." },
+                    { q: "تخفيض الأجور قد يؤدي إلى هجرة:", options: ["العمالة غير الماهرة", "العمالة الماهرة", "رؤوس الأموال", "الواردات"], a: 1, exp: "العمال المهرة يتركون أعمالهم للبحث عن فرص أفضل." },
+                    { q: "انخفاض الأجر يؤثر سلباً على:", options: ["التقنية", "نفسية العامل وإنتاجيته", "الأسعار", "الصادرات"], a: 1, exp: "يقلل الحافز والإبداع مما يؤثر على جودة المنتج." },
+                    { q: "لعلاج الفجوة التضخمية، يجب:", options: ["زيادة الإنفاق", "خفض الضرائب", "خفض الإنفاق وزيادة الضرائب", "زيادة الصادرات"], a: 2, exp: "سياسة مالية انكماشية لتقليل الطلب." },
+                    { q: "التضخم الركودي (Stagflation) يحدث بسبب:", options: ["زيادة AD", "انخفاض AS (صدمة عرض)", "انخفاض AD", "زيادة AS"], a: 1, exp: "ارتفاع التكاليف ينتقل بـ AS لليسار." },
+                    { q: "أزمة النفط 1973 مثال على:", options: ["تضخم ركودي من العرض", "تضخم ركودي من الطلب", "فجوة انكماشية", "توازن"], a: 0, exp: "ارتفاع أسعار الطاقة رفع التكاليف." },
+                    { q: "زيادة AD بشكل مفرط تؤدي إلى:", options: ["انخفاض البطالة وارتفاع الأجور", "انخفاض الأسعار", "انخفاض الإنتاج", "فائض عرض"], a: 0, exp: "الطلب المرتفع يزيد الطلب على العمالة ويرفع الأجور." },
+                    { q: "عند مستوى YF، أي زيادة في AD تؤدي إلى:", options: ["زيادة الإنتاج", "زيادة الأسعار فقط", "انخفاض الأسعار", "خفض البطالة"], a: 1, exp: "الموارد مستغلة بالكامل، فتتحول الزيادة لتضخم." },
+                    { q: "فائض العرض يدفع الأسعار إلى:", options: ["الارتفاع", "الانخفاض", "الثبات", "الانعدام"], a: 1, exp: "البضائع غير المباعة تدفع لتخفيض الأسعار." },
+                    { q: "أي مما يلي يؤدي لانتقال AS لليسار؟", options: ["انخفاض أسعار المواد الخام", "تحسن التقنية", "ارتفاع معدلات الأجور", "زيادة الإنتاجية"], a: 2, exp: "ارتفاع الأجور يزيد التكاليف." },
+                    { q: "في الفجوة التضخمية، التصحيح الذاتي يتم عبر:", options: ["AS لليمين", "AS لليسار", "AD لليمين", "ثبات"], a: 1, exp: "ارتفاع الأسعار يرفع الأجور المطلوبة، فتزيد التكاليف وينتقل AS لليسار." },
+                    { q: "الفرق بين تضخم الطلب وتضخم العرض:", options: ["كلاهما يرفع الأسعار ويخفض الإنتاج", "الأول يبدأ بزيادة AD والثاني بانخفاض AS", "الثاني يسبب كساداً فقط", "لا يوجد فرق"], a: 1, exp: "مصدر الصدمة يختلف." },
+                    { q: "إذا كان الاقتصاد عند YF، فإن البطالة:", options: ["صفر", "عند مستواها الطبيعي", "مرتفعة جداً", "لا يمكن تحديدها"], a: 1, exp: "التوظيف الكامل يعني البطالة الطبيعية." }
+                ]
+            }
+        };
+
+        let currentChapter = 'ch4';
+        let userAnswers = { ch4: {}, ch5: {}, ch6: {} };
+        let currentQuizData = [];
+
+        function toggleTheme() {
+            const body = document.body;
+            if (body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); document.querySelector('.theme-toggle').textContent = '🌙'; } 
+            else { body.setAttribute('data-theme', 'dark'); document.querySelector('.theme-toggle').textContent = '☀️'; }
+        }
+
+        function switchChapter(chapterId) {
+            currentChapter = chapterId;
+            document.querySelectorAll('.chapter-tabs button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderSidebar(); loadSlide(0);
+        }
+
+        function renderSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.innerHTML = '';
+            contentData[currentChapter].slides.forEach((slide, index) => {
+                const btn = document.createElement('button');
+                btn.className = `slide-btn ${index === 0 ? 'active' : ''}`;
+                btn.innerHTML = `<span class="num">${index + 1}</span> ${slide.title}`;
+                btn.onclick = () => loadSlide(index);
+                sidebar.appendChild(btn);
+            });
+            const div = document.createElement('div'); div.className = 'sidebar-divider'; sidebar.appendChild(div);
+            const summaryBtn = document.createElement('button'); summaryBtn.className = 'action-btn'; summaryBtn.innerHTML = '📄 الملخص'; summaryBtn.onclick = loadSummary; sidebar.appendChild(summaryBtn);
+            const quizBtn = document.createElement('button'); quizBtn.className = 'action-btn quiz'; quizBtn.innerHTML = '📝 الاختبار'; quizBtn.onclick = loadQuiz; sidebar.appendChild(quizBtn);
+        }
+
+        function loadSlide(index) {
+            document.querySelectorAll('.slide-btn').forEach((btn, i) => btn.classList.toggle('active', i === index));
+            document.getElementById('slide-content').innerHTML = contentData[currentChapter].slides[index].html;
+            if (document.getElementById('ad-slider')) initCh4Graph();
+            if (document.getElementById('sim-g-slider')) runSimulation();
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function loadSummary() {
+            document.querySelectorAll('.slide-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('slide-content').innerHTML = contentData[currentChapter].summary;
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function loadQuiz() {
+            document.querySelectorAll('.slide-btn').forEach(btn => btn.classList.remove('active'));
+            const contentDiv = document.getElementById('slide-content');
+            const originalData = contentData[currentChapter].quiz;
+            let shuffled = originalData.map(q => {
+                const options = q.options.map((text, i) => ({ text, isCorrect: i === q.a }));
+                options.sort(() => Math.random() - 0.5);
+                return { q: q.q, options: options.map(o => o.text), a: options.findIndex(o => o.isCorrect), exp: q.exp };
+            });
+            shuffled.sort(() => Math.random() - 0.5);
+            currentQuizData = shuffled;
+            let html = `<h2 class="slide-title">الاختبار</h2><p style="font-size:0.9rem;">سيظهر التصحيح فوراً.</p><div id="quiz-container"></div><button class="btn" style="width:100%; margin-top:1rem;" onclick="showFinalScore()">عرض النتيجة</button><div class="score-box" id="score-box"></div>`;
+            contentDiv.innerHTML = html;
+            const container = document.getElementById('quiz-container');
+            userAnswers[currentChapter] = {};
+            currentQuizData.forEach((item, index) => {
+                const block = document.createElement('div');
+                block.className = 'question-block';
+                block.innerHTML = `<div class="question-text">${index + 1}. ${item.q}</div><div class="options-grid">${item.options.map((opt, i) => `<div class="option" onclick="selectOption(this, ${index}, ${i})" data-q="${index}" data-opt="${i}">${opt}</div>`).join('')}</div><div class="explanation" id="exp-${index}"><strong>الشرح:</strong> ${item.exp}</div>`;
+                container.appendChild(block);
+            });
+            document.getElementById('main-content').scrollTo(0, 0);
+        }
+
+        function selectOption(el, qIndex, optIndex) {
+            const data = currentQuizData[qIndex];
+            const parent = el.parentElement;
+            const options = Array.from(parent.children);
+            userAnswers[currentChapter][qIndex] = optIndex;
+            options.forEach(opt => {
+                opt.classList.remove('correct', 'wrong');
+                if (parseInt(opt.dataset.opt) === data.a) opt.classList.add('correct');
+            });
+            if (optIndex !== data.a) el.classList.add('wrong');
+            document.getElementById(`exp-${qIndex}`).classList.add('show');
+        }
+
+        function showFinalScore() {
+            const data = currentQuizData;
+            let score = 0;
+            Object.keys(userAnswers[currentChapter]).forEach(qIndex => {
+                if (userAnswers[currentChapter][qIndex] === data[qIndex].a) score++;
+            });
+            const scoreBox = document.getElementById('score-box');
+            scoreBox.style.display = 'block';
+            scoreBox.innerHTML = `النتيجة: ${score} من ${data.length}<br><br><button class="btn" style="background:var(--warning);" onclick="loadQuiz()">🔄 إعادة الاختبار</button>`;
+            scoreBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function initCh4Graph() {
+            const adSlider = document.getElementById('ad-slider');
+            const adLine = document.getElementById('ad-line'); const adLabel = document.getElementById('ad-label');
+            const eqPoint = document.getElementById('eq-point'); const eqLineY = document.getElementById('eq-line-y');
+            const eqLineX = document.getElementById('eq-line-x'); const eqText = document.getElementById('eq-text');
+            const ch4Status = document.getElementById('ch4-status');
+            function update() {
+                const val = parseInt(adSlider.value); const yIntercept = 450 - val; const m = -0.6;
+                const x1 = 60, y1 = yIntercept, x2 = 400, y2 = yIntercept + m * (x2 - x1);
+                adLine.setAttribute('y1', y1); adLine.setAttribute('y2', y2); adLabel.setAttribute('y', y2 - 10);
+                let eqX = (324 - yIntercept) / 0.4; let eqY = -eqX + 360;
+                if (eqX < 60) { eqX = 60; eqY = 300; } if (eqX > 300) { eqX = 300; eqY = 60; }
+                eqPoint.setAttribute('cx', eqX); eqPoint.setAttribute('cy', eqY);
+                eqLineY.setAttribute('x1', eqX); eqLineY.setAttribute('x2', eqX);
+                eqLineX.setAttribute('y1', eqY); eqLineX.setAttribute('y2', eqY); eqText.setAttribute('x', eqX);
+                if (eqX < 260) {
+                    eqPoint.style.fill = 'var(--danger)'; eqText.style.fill = 'var(--danger)';
+                    ch4Status.textContent = "⚠️ فجوة انكماشية (بطالة)";
+                    ch4Status.style.background = "rgba(239, 68, 68, 0.1)"; ch4Status.style.color = "var(--danger)";
+                } else if (eqX > 300) {
+                    eqPoint.style.fill = 'var(--warning)'; eqText.style.fill = 'var(--warning)';
+                    ch4Status.textContent = "⚠️ فجوة تضخمية (تضخم)";
+                    ch4Status.style.background = "rgba(245, 158, 11, 0.1)"; ch4Status.style.color = "var(--warning)";
+                } else {
+                    eqPoint.style.fill = 'var(--secondary)'; eqText.style.fill = 'var(--secondary)';
+                    ch4Status.textContent = "✅ توازن كامل";
+                    ch4Status.style.background = "rgba(16, 185, 129, 0.1)"; ch4Status.style.color = "var(--secondary)";
+                }
+            }
+            adSlider.addEventListener('input', update); update();
+        }
+
+        function updateCh6Graph(state) {
+            const asLine = document.getElementById('as-line-6'); const adLine = document.getElementById('ad-line-6');
+            const eqPoint = document.getElementById('eq-point-6'); const eqLabel = document.getElementById('eq-label-6');
+            const explanation = document.getElementById('ch6-explanation');
+            asLine.setAttribute('x1', 100); asLine.setAttribute('y1', 330); asLine.setAttribute('x2', 500); asLine.setAttribute('y2', 100);
+            adLine.setAttribute('x1', 150); adLine.setAttribute('y1', 80);  adLine.setAttribute('x2', 450); adLine.setAttribute('y2', 300);
+            if (state === 'eq') {
+                eqPoint.setAttribute('cx', 350); eqPoint.setAttribute('cy', 160); eqLabel.setAttribute('x', 350); eqLabel.setAttribute('y', 140);
+                explanation.innerHTML = "توازن عند YF. جرب: <span class='interactive-text' onclick='updateCh6Graph(\"gap-def\")'>فجوة انكماشية</span> | <span class='interactive-text' onclick='updateCh6Graph(\"gap-inf\")'>فجوة تضخمية</span>";
+            } else if (state === 'gap-def') {
+                adLine.setAttribute('x1', 100); adLine.setAttribute('y1', 130); adLine.setAttribute('x2', 400); adLine.setAttribute('y2', 350);
+                eqPoint.setAttribute('cx', 250); eqPoint.setAttribute('cy', 230); eqLabel.setAttribute('x', 250); eqLabel.setAttribute('y', 210);
+                explanation.innerHTML = "⚠️ فجوة انكماشية: بطالة. <br><span class='interactive-text' onclick='updateCh6Graph(\"eq\")'>إعادة</span>";
+            } else if (state === 'gap-inf') {
+                adLine.setAttribute('x1', 200); adLine.setAttribute('y1', 30); adLine.setAttribute('x2', 500); adLine.setAttribute('y2', 250);
+                eqPoint.setAttribute('cx', 430); eqPoint.setAttribute('cy', 130); eqLabel.setAttribute('x', 430); eqLabel.setAttribute('y', 110);
+                explanation.innerHTML = "⚠️ فجوة تضخمية: تضخم. <br><span class='interactive-text' onclick='updateCh6Graph(\"eq\")'>إعادة</span>";
+            }
+        }
+
+        function updateStagGraph(type) {
+            const asLine = document.getElementById('as-line-6b'); const adLine = document.getElementById('ad-line-6b');
+            const eqPoint = document.getElementById('eq-point-6b'); const eqLabel = document.getElementById('eq-label-6b');
+            const explanation = document.getElementById('ch6-explanation-2');
+            asLine.setAttribute('x1', 100); asLine.setAttribute('y1', 330); asLine.setAttribute('x2', 500); asLine.setAttribute('y2', 100);
+            adLine.setAttribute('x1', 150); adLine.setAttribute('y1', 80);  adLine.setAttribute('x2', 450); adLine.setAttribute('y2', 300);
+            if (type === 'supply') {
+                asLine.setAttribute('x1', 150); asLine.setAttribute('y1', 280); asLine.setAttribute('x2', 550); asLine.setAttribute('y2', 50);
+                eqPoint.setAttribute('cx', 250); eqPoint.setAttribute('cy', 130); eqLabel.setAttribute('x', 250); eqLabel.setAttribute('y', 110);
+                explanation.innerHTML = "⚠️ تضخم ركودي (صدمة عرض): AS لليسار. ارتفاع الأسعار وانخفاض الناتج.<br><br><span class='interactive-text' onclick='updateStagGraph(\"reset\")'>إعادة تعيين</span>";
+            } else if (type === 'demand') {
+                adLine.setAttribute('x1', 200); adLine.setAttribute('y1', 30); adLine.setAttribute('x2', 500); adLine.setAttribute('y2', 250);
+                eqPoint.setAttribute('cx', 430); eqPoint.setAttribute('cy', 130); eqLabel.setAttribute('x', 430); eqLabel.setAttribute('y', 110);
+                explanation.innerHTML = "⚠️ تضخم ركودي (صدمة طلب): AD لليمين مفرط، ثم AS لليسار.<br><br><span class='interactive-text' onclick='updateStagGraph(\"reset\")'>إعادة تعيين</span>";
+            } else {
+                eqPoint.setAttribute('cx', 300); eqPoint.setAttribute('cy', 195); eqLabel.setAttribute('x', 300); eqLabel.setAttribute('y', 175);
+                explanation.innerHTML = "تضخم ركودي. انقر: <span class='interactive-text' onclick='updateStagGraph(\"supply\")'>صدمة عرض</span> | <span class='interactive-text' onclick='updateStagGraph(\"demand\")'>صدمة طلب</span>";
+            }
+        }
+
+        function runSimulation() {
+            const b = parseFloat(document.getElementById('sim-b').value) || 0.75;
+            const t = parseFloat(document.getElementById('sim-t').value) || 0.2;
+            const deltaG = parseFloat(document.getElementById('sim-g-slider').value) || 0;
+            const multiplier = 1 / (1 - b + (b * t));
+            const deltaY = deltaG * multiplier;
+            document.getElementById('sim-g-val').textContent = deltaG > 0 ? "+" + deltaG : deltaG;
+            document.getElementById('sim-mr-val').textContent = multiplier.toFixed(2);
+            const yf = 7000; const currentY = 6000 + deltaY;
+            const shiftPx = (deltaY / 1500) * 150;
+            const adLine = document.getElementById('sim-ad'); const eqPoint = document.getElementById('sim-eq'); const analysisBox = document.getElementById('sim-analysis');
+            adLine.setAttribute('x1', 150 + shiftPx); adLine.setAttribute('y1', 200 - (shiftPx * 0.5));
+            adLine.setAttribute('x2', 450 + shiftPx); adLine.setAttribute('y2', 300 - (shiftPx * 0.5));
+            let newEqX = 289 + shiftPx; let newEqY = 182 - (shiftPx * 0.5);
+            if (newEqX < 80) newEqX = 80; if (newEqX > 480) newEqX = 480;
+            eqPoint.setAttribute('cx', newEqX); eqPoint.setAttribute('cy', newEqY);
+            if (currentY > yf + 100) {
+                analysisBox.innerHTML = `⚠️ <strong>فجوة تضخمية!</strong> الناتج (${currentY.toFixed(0)}) تجاوز التوظيف الكامل (7000). تضخم.`;
+                analysisBox.style.borderRightColor = "var(--danger)"; analysisBox.style.color = "var(--danger)";
+            } else if (currentY < yf - 100) {
+                analysisBox.innerHTML = `⚠️ <strong>فجوة انكماشية!</strong> الناتج (${currentY.toFixed(0)}) أقل من التوظيف الكامل (7000). بطالة.`;
+                analysisBox.style.borderRightColor = "var(--danger)"; analysisBox.style.color = "var(--danger)";
+            } else {
+                analysisBox.innerHTML = `✅ <strong>توازن مثالي!</strong> الناتج (${currentY.toFixed(0)}) قريب من التوظيف الكامل (7000).`;
+                analysisBox.style.borderRightColor = "var(--secondary)"; analysisBox.style.color = "var(--secondary)";
+            }
+        }
+
+        renderSidebar();
+        loadSlide(0);
+    </script>
+</body>
+</html>
